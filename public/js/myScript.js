@@ -1,3 +1,5 @@
+
+
 //// the triangle
 //var myPath = new Path();
 //myPath.strokeColor = 'black';
@@ -61,94 +63,100 @@ var path2 = new Path.Rectangle({
 
 var group = new Group(path1, path2);
 
-// // All styles set on a group are automatically
-// // set on the children of the group:
-// group.style = {
-//     strokeColor: 'black',
-// dashArray: [4, 10],
-// strokeWidth: 4,
-// strokeCap: 'round'
-// };
+function StickFigure(figure){
+  this.health = 40;
+  this.attack = 8;
+  this.currentlySelected = false;
+  this.representation = figure;
+}
 
-// group.position.x += 300;
+var newFigure = {
+  limb: undefined,
+  limbs: [],
+}
 
-var newPath;
-var paths = [];
+var stickFiguresOnCanvas = [];
+
 var figure;
 var destination;
-var figureSelected = false;
+var drawButtonSelected = false;
 
-function onMouseDown(event) {
-  // if (newPath) {
-  // 	newPath.selected = false;
-  // }
-  if (paths.length < 4) {
-    newPath = new Path();
-    newPath.strokeColor = "black";
-    newPath.strokeWidth = 6;
-    newPath.strokeJoin = 'miter';
-  } else {
-    destination = event.point;
-  }
-}
+$("#draw-stick-figure-button").click(function(){
+  $(this).toggleClass("selected");
+  drawButtonSelected = !drawButtonSelected;
+  console.log("draw button selected: ", drawButtonSelected);
+})
 
-function onMouseDrag(event) {
-  if (paths.length < 4) {
-    newPath.add(event.point);
-  } else {
-    return;
-  }
-}
-
-function onMouseUp (event) {
-  if (paths.length < 4) {
-    newPath.smooth();
-    newPath.strokeColor = "black";
-    paths.push(newPath);
-    console.log(paths);
-
-    if (paths.length === 4) {
-      figure = new Group(paths);
-      figure.strokeColor = {
-        hue: Math.random() * 360,
-        saturation: 1,
-        brightness: 1
-      };
-      destination = figure.position;
-      figure.onClick = function () {
-        figure.strokeColor = "green";
-        figureSelected = true;
-
-      }
-      console.log(figure);
-    }
-  } else {
-    return;
-  }
-
-  // newPath.selected = true;
-  // var myCircle = new Path.Circle({
-  // 	center: event.point,
-  // 	radius: 10
-  // });
-  // myCircle.strokeColor = 'black';
-  // myCircle.fillColor = 'white';
-}
-
-
-
-function onFrame (event) {
-  if (typeof figure === 'object' && figureSelected === true) {
-    var vector = destination - figure.position;
-    figure.position += vector / 30;
-    if (figure.position === destination) {
-      figureSelected = false;
-      figure.strokeColor = {
-        hue: Math.random() * 360,
-        saturation: 1,
-        brightness: 1
+  function onMouseDown (event) {
+    if (drawButtonSelected) {
+      if (newFigure.limbs.length < 4) {
+        newFigure.limb = new Path();
+        newFigure.limb.strokeColor = "black";
+        newFigure.limb.strokeWidth = 6;
+        newFigure.limb.strokeJoin = 'miter';
+      } else {
+        destination = event.point;
       }
     }
   }
 
-}
+  function onMouseDrag (event) {
+    if (drawButtonSelected) {
+      if (newFigure.limbs.length < 4) {
+        newFigure.limb.add(event.point);
+      } else {
+        return;
+      }
+    }
+  }
+
+  function onMouseUp (event) {
+    if (drawButtonSelected) {
+      if (newFigure.limbs.length < 4) {
+        newFigure.limb.smooth();
+        newFigure.limb.strokeColor = "black";
+        newFigure.limbs.push(newFigure.limb);
+        console.log("LIMB", newFigure.limb);
+        console.log("LIMBS", newFigure.limbs);
+
+        if (newFigure.limbs.length === 4) {
+          drawnFigure = new Group(newFigure.limbs);
+          var figure = new StickFigure(drawnFigure);
+          figure.representation.strokeColor = {
+            hue: Math.random() * 360,
+            saturation: 1,
+            brightness: 1
+          };
+          destination = figure.representation.position;
+          figure.onClick = function () {
+            figure.representation.strokeColor = "green";
+            figure.currentlySelected = true;
+          }
+          stickFiguresOnCanvas.push(figure);
+          console.log(figure);
+          //reset the new figure object
+          newFigure = {
+            limb: undefined,
+            limbs: [],
+          }
+        }
+      } else {
+        return;
+      }
+    }
+  } 
+
+
+
+// function onFrame (event) {
+//     var vector = destination - figure.position;
+//     figure.position += vector / 30;
+//     if (figure.position === destination) {
+//       figureSelected = false;
+//       figure.strokeColor = {
+//         hue: Math.random() * 360,
+//         saturation: 1,
+//         brightness: 1
+//       }
+//     }
+// }

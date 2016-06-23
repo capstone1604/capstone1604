@@ -1,0 +1,29 @@
+#ui-panel {
+	background: white;
+	width: 300px;
+	border: 1px solid gainsboro;
+	border-radius: 5px;
+	height: 40px;
+}
+
+.ui-button {
+	display: block;
+	margin: auto;
+	border: 1px solid gainsboro;
+	border-radius: 5px;
+	width: 50%;
+	height: 20px;
+}
+
+.ui-button.selected {
+	background-color: gainsboro;
+}
+
+.ui-button p {
+	margin: auto auto;
+	text-align: center;
+}
+
+.ui-button:hover {
+	cursor: pointer;
+}

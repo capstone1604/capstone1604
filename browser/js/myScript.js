@@ -83,15 +83,16 @@ function onMouseUp (event) {
 
       if (newFigure.limbs.length === 4) {
         drawnFigure = new Group(newFigure.limbs);
-        var figure = new StickFigure(drawnFigure);
-        figure.representation.strokeColor = {
+        var newFigureColor = {
           hue: Math.random() * 360,
           saturation: 1,
           brightness: 1
         };
+        var figure = new StickFigure(drawnFigure, newFigureColor);
+
+        figure.representation.strokeColor = newFigureColor;
         destination = figure.representation.position;
         stickFiguresOnCanvas.push(figure);
-        console.log(figure);
         //reset the new figure object
         newFigure = {
           limb: undefined,

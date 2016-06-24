@@ -83,15 +83,16 @@ function onMouseUp (event) {
 
       if (newFigure.limbs.length === 4) {
         drawnFigure = new Group(newFigure.limbs);
-        var figure = new StickFigure(drawnFigure);
-        figure.representation.strokeColor = {
+        var newFigureColor = {
           hue: Math.random() * 360,
           saturation: 1,
           brightness: 1
         };
+        var figure = new StickFigure(drawnFigure, newFigureColor);
+
+        figure.representation.strokeColor = newFigureColor;
         destination = figure.representation.position;
         stickFiguresOnCanvas.push(figure);
-        console.log(figure);
         //reset the new figure object
         newFigure = {
           limb: undefined,
@@ -134,6 +135,7 @@ function showIntersections() {
       figure.representation.strokeColor = "green";
     } else {
       figure.currentlySelected = false;
+      figure.representation.strokeColor = figure.color;
     }
   })
   console.log(currentlySelectedFigures);
@@ -147,7 +149,7 @@ function StickFigure(figure, color){
   this.attack = 8;
   this.representation = figure;
   this.currentlySelected = false;
-  this.color;
+  this.color = color;
 }
 
 // StickFigure.prototype.onClick = function(){

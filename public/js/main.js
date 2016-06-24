@@ -1,3 +1,4 @@
+
 var stickFiguresOnCanvas = [];
 var currentlySelectedFigures = [];
 
@@ -8,12 +9,32 @@ var initialSelectPoint;
 var newSelection;
 
 var newFigure = {
-  limb: undefined,
-  limbs: []
+  limbs: [],
+  limb: undefined
 }
+
+function checkIfFigureValidAndRemoveIfNot(){
+  var invalid = false;
+  if (newFigure.limbs.length > 0) {
+    invalid = true;
+    for (var i = 0; i < newFigure.limbs.length; i++) {
+      newFigure.limbs[i].remove();
+    }
+    newFigure.limbs = [];
+  }
+  //later, replace this with an error that the user can see
+  if (invalid) console.log("invalid figure! deleting!");
+  else console.log("valid figure!");
+  
+}
+
 
 $("#draw-stick-figure-button").click(function(){
   $(this).toggleClass("selected");
+  //remove figure from canvas if not valid -- only valid if made with 4 strokes
+  if (drawing) {
+    checkIfFigureValidAndRemoveIfNot();
+  }
   drawing = !drawing;
   console.log("drawing? : ", drawing);
 })
@@ -80,6 +101,8 @@ function onMouseUp (event) {
           limb: undefined,
           limbs: []
         }
+        $("#draw-stick-figure-button").removeClass("selected");
+        drawing = false;
       }
     } 
   } else if (newSelection) {
@@ -87,23 +110,6 @@ function onMouseUp (event) {
     newSelection.remove();
   }
 } 
-
-function showIntersections() {
-  currentlySelectedFigures = [];
-  
-  stickFiguresOnCanvas.forEach(function(figure){
-    if ( newSelection.intersects(figure.representation) || newSelection.contains(figure.representation) || newSelection.bounds.contains(figure.representation)  ) {
-      //needs fixin'
-
-      //figure.representation.contains(newSelection)
-      figure.currentlySelected = true;
-      currentlySelectedFigures.push(figure);
-      console.log(currentlySelectedFigures);
-    } else {
-      figure.currentlySelected = false;
-    }
-  })
-}
 
 // function onFrame (event) {
 //     var vector = destination - figure.position;
@@ -118,17 +124,6 @@ function showIntersections() {
 //     }
 // }
 
-function StickFigure(figure){
-  this.health = 40;
-  this.attack = 8;
-  this.representation = figure;
-  this.currentlySelected = false;
-}
-
-// StickFigure.prototype.onClick = function(){
-// 	if (this.representation.)
-// 	this.representation.strokeColor = "green";
-// }
 function showIntersections() {
   currentlySelectedFigures = [];
   
@@ -145,3 +140,14 @@ function showIntersections() {
     }
   })
 }
+function StickFigure(figure){
+  this.health = 40;
+  this.attack = 8;
+  this.representation = figure;
+  this.currentlySelected = false;
+}
+
+// StickFigure.prototype.onClick = function(){
+// 	if (this.representation.)
+// 	this.representation.strokeColor = "green";
+// }

@@ -8,7 +8,7 @@ gulp.task('watch', function () {
 });
 
 gulp.task('scripts', function() {
-  return gulp.src(['./public/js/myScript.js', './public/js/keyboard.js', './public/js/mouse.js', './public/js/stickfigure.constructor.js', './public/js/select.functionality.js'])
+  return gulp.src(['./browser/js/*.js', '/browser/**/*.js'])
     .pipe(concat('main.js'))
     .pipe(gulp.dest('./public/js/'));
 });

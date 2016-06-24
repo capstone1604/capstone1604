@@ -43,8 +43,9 @@ function onKeyDown(event) {
   $("#draw-stick-figure-button").toggleClass("selected");
   if (event.key === 'd') {
     if (drawing === true) {
-      //
-    }
+      checkIfFigureValidAndRemoveIfNot();
+      return drawing = false;
+    } 
     drawing = !drawing;
   }
 }

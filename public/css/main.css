@@ -1,3 +1,13 @@
+.player-ui {
+	background-color: green;
+	width: 300px;
+}
+
+button {
+	background-color: green;
+	width: 300px;
+}
+
 #ui-panel {
 	background: white;
 	width: 300px;

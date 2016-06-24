@@ -16,6 +16,6 @@ function showIntersections() {
   console.log(currentlySelectedFigures);
 }
 
-figure.onClick = function () {
-  figure.representation.strokeColor = "green";
-}
+// figure.onClick = function () {
+//   figure.representation.strokeColor = "green";
+// }

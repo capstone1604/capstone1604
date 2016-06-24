@@ -8,12 +8,31 @@ var initialSelectPoint;
 var newSelection;
 
 var newFigure = {
-  limb: undefined,
-  limbs: []
+  limbs: [],
+  limb: undefined
+}
+
+function checkIfFigureValidAndRemoveIfNot(){
+  var invalid = false;
+  if (newFigure.limbs.length > 0) {
+    invalid = true;
+    for (var i = 0; i < newFigure.limbs.length; i++) {
+      newFigure.limbs[i].remove();
+    }
+    newFigure.limbs = [];
+  }
+  //later, replace this with an error that the user can see
+  if (invalid) console.log("invalid figure! deleting!");
+  else console.log("valid figure!");
+  
 }
 
 $("#draw-stick-figure-button").click(function(){
   $(this).toggleClass("selected");
+  //remove figure from canvas if not valid -- only valid if made with 4 strokes
+  if (drawing) {
+    checkIfFigureValidAndRemoveIfNot();
+  }
   drawing = !drawing;
   console.log("drawing? : ", drawing);
 })
@@ -22,8 +41,9 @@ function onKeyDown(event) {
   $("#draw-stick-figure-button").toggleClass("selected");
   if (event.key === 'd') {
     if (drawing === true) {
-      //
-    }
+      checkIfFigureValidAndRemoveIfNot();
+      return drawing = false;
+    } 
     drawing = !drawing;
   }
 }
@@ -70,9 +90,6 @@ function onMouseUp (event) {
           brightness: 1
         };
         destination = figure.representation.position;
-        figure.onClick = function () {
-          figure.representation.strokeColor = "green";
-        }
         stickFiguresOnCanvas.push(figure);
         console.log(figure);
         //reset the new figure object
@@ -80,12 +97,15 @@ function onMouseUp (event) {
           limb: undefined,
           limbs: []
         }
+        $("#draw-stick-figure-button").removeClass("selected");
+        drawing = false;
       }
     } 
   } else if (newSelection) {
     showIntersections();
     newSelection.remove();
   }
+
 }
 
 function onFrame (event) {

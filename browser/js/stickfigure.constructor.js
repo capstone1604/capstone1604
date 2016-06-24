@@ -3,7 +3,7 @@ function StickFigure(figure, color){
   this.attack = 8;
   this.representation = figure;
   this.currentlySelected = false;
-  this.color;
+  this.color = color;
 }
 
 // StickFigure.prototype.onClick = function(){

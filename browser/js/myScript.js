@@ -1,4 +1,3 @@
-
 var stickFiguresOnCanvas = [];
 var currentlySelectedFigures = [];
 
@@ -8,6 +7,10 @@ var destination;
 var initialSelectPoint;
 var newSelection;
 
+var newFigure = {
+  limb: undefined,
+  limbs: []
+}
 
 $("#draw-stick-figure-button").click(function(){
   $(this).toggleClass("selected");
@@ -83,34 +86,17 @@ function onMouseUp (event) {
     showIntersections();
     newSelection.remove();
   }
-} 
-
-function showIntersections() {
-  currentlySelectedFigures = [];
-  
-  stickFiguresOnCanvas.forEach(function(figure){
-    if ( newSelection.intersects(figure.representation) || newSelection.contains(figure.representation) || newSelection.bounds.contains(figure.representation)  ) {
-      //needs fixin'
-
-      //figure.representation.contains(newSelection)
-      figure.currentlySelected = true;
-      currentlySelectedFigures.push(figure);
-      console.log(currentlySelectedFigures);
-    } else {
-      figure.currentlySelected = false;
-    }
-  })
 }
 
-// function onFrame (event) {
-//     var vector = destination - figure.position;
-//     figure.position += vector / 30;
-//     if (figure.position === destination) {
-//       figureSelected = false;
-//       figure.strokeColor = {
-//         hue: Math.random() * 360,
-//         saturation: 1,
-//         brightness: 1
-//       }
-//     }
-// }
+function onFrame (event) {
+    var vector = destination - newFigure.position;
+    newFigure.position += vector / 30;
+    if (newFigure.position === destination) {
+      figureSelected = false;
+      newFigure.strokeColor = {
+        hue: Math.random() * 360,
+        saturation: 1,
+        brightness: 1
+      }
+    }
+}

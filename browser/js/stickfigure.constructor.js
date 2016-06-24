@@ -1,8 +1,9 @@
-function StickFigure(figure){
+function StickFigure(figure, color){
   this.health = 40;
   this.attack = 8;
   this.representation = figure;
   this.currentlySelected = false;
+  this.color;
 }
 
 // StickFigure.prototype.onClick = function(){

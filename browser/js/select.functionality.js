@@ -11,6 +11,7 @@ function showIntersections() {
       figure.representation.strokeColor = "green";
     } else {
       figure.currentlySelected = false;
+      figure.representation.strokeColor = figure.color;
     }
   })
   console.log(currentlySelectedFigures);

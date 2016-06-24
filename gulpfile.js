@@ -9,7 +9,7 @@ gulp.task('watch', function () {
 
 gulp.task('scripts', function() {
   return gulp.src(['./public/js/myScript.js', './public/js/keyboard.js', './public/js/mouse.js'])
-    .pipe(concat('bundle.js'))
+    .pipe(concat('main.js'))
     .pipe(gulp.dest('./public/js/'));
 });
 

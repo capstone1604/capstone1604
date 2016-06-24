@@ -1,13 +1,3 @@
-function StickFigure(figure){
-  this.health = 40;
-  this.attack = 8;
-  this.representation = figure;
-}
-
-var newFigure = {
-  limb: undefined,
-  limbs: [],
-}
 
 var stickFiguresOnCanvas = [];
 var currentlySelectedFigures = [];
@@ -90,20 +80,24 @@ function onMouseUp (event) {
       }
     } 
   } else if (newSelection) {
-    currentlySelectedFigures = [];
     showIntersections();
     newSelection.remove();
   }
 } 
 
 function showIntersections() {
+  currentlySelectedFigures = [];
+  
   stickFiguresOnCanvas.forEach(function(figure){
     if ( newSelection.intersects(figure.representation) || newSelection.contains(figure.representation) || newSelection.bounds.contains(figure.representation)  ) {
       //needs fixin'
 
       //figure.representation.contains(newSelection)
+      figure.currentlySelected = true;
       currentlySelectedFigures.push(figure);
       console.log(currentlySelectedFigures);
+    } else {
+      figure.currentlySelected = false;
     }
   })
 }

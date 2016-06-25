@@ -17,8 +17,8 @@
 		</div>
 		<canvas id="myCanvas" style="width: 100%; height: 100%;"></canvas>
 		<script>
-			var socket = io.connect();
-
+			// to test the sockets 
+			var socket = io();
 			socket.on('date', function(data){
 				$('#date').text(data.date);
 			});

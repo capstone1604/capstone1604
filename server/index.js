@@ -1,8 +1,8 @@
 var express = require('express');
 var app = express();
 var path = require('path');
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+//var http = require('http').Server(app);
+
 
 app.use(require('./static.routing'));
 
@@ -47,28 +47,25 @@ app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, '/../public/index.html'));
 });
 
-console.log("i am here")
 
-io.on('connection', function (socket) {
-
-	console.log('a user connected!');
-  //
-	//socket.on('disconnect', function () {
-	//	console.log('im disconnecting')
-	//});
-  //
-	//setInterval(function(){
-	//	socket.emit('date', {'date': new Date()});
-	//}, 1000);
-
-	//socket.on('chat message', function(msg){
-	//	io.emit('chat message', msg);
-	//});
-
+var server = app.listen(3030, function () {
+  console.log('Example app listening on port 3030!');
 });
 
 
+var io = require('socket.io').listen(server);
+io.on('connection', function (socket) {
 
-app.listen(3030, function () {
-  console.log('Example app listening on port 3030!');
+	console.log('a user connected!');
+
+	socket.on('disconnect', function () {
+		console.log('im disconnecting')
+	});
+
+	// to test if sockets work
+	setInterval(function(){
+		socket.emit('date', {'date': new Date()});
+	}, 1000);
+
+
 });

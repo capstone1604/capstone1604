@@ -1,3 +1,73 @@
+function findBodyParts(stickfigure, event){
+	var figure = stickfigure.representation;
+	var bottomLeft = figure._bounds.getBounds.bottomLeft;
+	var bottomRight = figure._bounds.getBounds.bottomRight;
+	var lowestSegment;
+	var lowestSegment2;
+	var leftLeg;
+	var rightLeg;
+	var leftArm;
+	var rightArm;
+
+	figure.children.forEach(function(child){
+		for (var i = 0; i < child.segments.length; i++){
+			if (!lowestSegment){
+				lowestSegment = child.segments[i];
+			}
+			else if (lowestSegment._point.y < child.segments[i]._point.y){
+				lowestSegment = child.segments[i];
+			}
+		}
+	})
+
+	//the below forEach finds the second lowest segment in order to find the other leg
+	//the below assumes the user will draw the two legs with two different lines/paths
+	//there's gotta be a way to do the below on the previous forEach...
+	figure.children.forEach(function(child){
+		if (child !== lowestSegment.path){
+			for (var i = 0; i < child.segments.length; i++){
+				if (!lowestSegment2){
+					lowestSegment2 = child.segments[i];
+				}
+				else if (lowestSegment2._point.y < child.segments[i]._point.y){
+					lowestSegment2 = child.segments[i];
+				}
+			}
+		}
+		if (child._bounds.getBounds.bottomLeft._x === bottomLeft._x){
+			leftArm = child;
+		}
+		if (child._bounds.getBounds.bottomRight._x === bottomRight._x){
+			rightArm = child;
+		}
+	})
+
+	//the below assumes the legs will be separate lines/paths
+	if (lowestSegment._point.x > lowestSegment2._point.x){
+		leftLeg = lowestSegment2.path;
+		rightLeg = lowestSegment.path;
+	}
+	else {
+		leftLeg = lowestSegment.path;
+		rightLeg = lowestSegment2.path;	
+	}
+
+	leftLeg.strokeColor = "blue";
+	rightLeg.strokeColor = "red";
+	leftArm.strokeColor = "black";
+	rightArm.strokeColor = "orange";
+
+	stickfigure.leftLeg = leftLeg;
+	stickfigure.rightLeg = rightLeg;
+	stickfigure.leftArm = leftArm;
+	stickfigure.rightArm = rightArm;
+	// walk(stickfigure, event);
+}
+
+// function walk(stickfigure, event){
+// 	var rightLeg = stickfigure.rightLeg;
+
+// }
 var stickFiguresOnCanvas = [];
 var currentlySelectedFigures = [];
 
@@ -12,128 +82,128 @@ var newFigure = {
   limb: undefined
 }
 
-function checkIfFigureValidAndRemoveIfNot(){
-  var invalid = false;
-  if (newFigure.limbs.length > 0) {
-    invalid = true;
-    for (var i = 0; i < newFigure.limbs.length; i++) {
-      newFigure.limbs[i].remove();
-    }
-    newFigure.limbs = [];
-  }
-  //later, replace this with an error that the user can see
-  if (invalid) console.log("invalid figure! deleting!");
-  else console.log("valid figure!");
-  
-}
-
 $("#draw-stick-figure-button").click(function(){
   $(this).toggleClass("selected");
-  //remove figure from canvas if not valid -- only valid if made with 4 strokes
-  if (drawing) {
-    checkIfFigureValidAndRemoveIfNot();
-  }
   drawing = !drawing;
   console.log("drawing? : ", drawing);
 })
 
+function finishDrawing (){
+  drawnFigure = new Group(newFigure.limbs);
+  var newFigureColor = {
+    hue: Math.random() * 360,
+    saturation: 1,
+    brightness: 1
+  };
+  var figure = new StickFigure(drawnFigure, newFigureColor);
+  figure.representation.strokeColor = newFigureColor;
+  stickFiguresOnCanvas.push(figure);
+  newFigure = {
+    limb: undefined,
+    limbs: []
+  }
+  $("#draw-stick-figure-button").removeClass("selected");
+  drawing = false;
+}
+
+function cancelDrawing (){
+  for (var i = 0; i < newFigure.limbs.length; i++) {
+    newFigure.limbs[i].remove();
+  }
+  newFigure.limbs = [];
+  $("#draw-stick-figure-button").removeClass("selected");
+}
+
 function onKeyDown(event) {
-  $("#draw-stick-figure-button").toggleClass("selected");
-  if (event.key === 'd') {
-    if (drawing === true) {
-      checkIfFigureValidAndRemoveIfNot();
-      return drawing = false;
-    } 
+  if (event.key === 'd' && newFigure.limbs.length > 0) {
+    finishDrawing();
+  }
+  else if (event.key === 'd' && newFigure.limbs.length === 0){
+    $("#draw-stick-figure-button").toggleClass("selected");
+    drawing = !drawing;
+  }
+  else if (event.key === 'c' && drawing){
+    cancelDrawing();
     drawing = !drawing;
   }
 }
 
 function onMouseDown (event) {
-  if (drawing && newFigure.limbs.length < 4) {
-      newFigure.limb = new Path();
-      newFigure.limb.strokeColor = "black";
-      newFigure.limb.strokeWidth = 6;
-      newFigure.limb.strokeJoin = 'miter'; 
-  } else {
+  if (event.event.button === 0 && drawing){
+    newFigure.limb = new Path();
+    newFigure.limb.strokeColor = "black";
+    newFigure.limb.strokeJoin = 'miter';
+    newFigure.limb.strokeWidth = 6;
+  }
+  else if (event.event.button === 0 && !drawing){
     initialSelectPoint = event.point;
     newSelection = new Shape.Rectangle(event.point, event.point);
+  }
+  else if (event.event.button === 2){
+    initialSelectPoint = undefined;
+    event.preventDefault(); //maybe not necessary
+    currentlySelectedFigures.forEach(function(figure){
+      figure.destination = event.point;
+    })
   }
 }
 
 function onMouseDrag (event) {
-  if (drawing && newFigure.limbs.length < 4) {
+  if (drawing && event.event.button !== 2) {
     newFigure.limb.add(event.point);
-  } else {
+  } 
+  else if (event.event.button !== 2 && initialSelectPoint){
+    if (newSelection) {
+      newSelection.remove();
+    }
     newFigure.limb = null;
-    if (newSelection) newSelection.remove();
     newSelection = new Shape.Rectangle(initialSelectPoint, event.point);
     newSelection.fillColor = 'rgb(233, 233, 255, 0.5)';
-    newSelection.selected = true;
   }
 }
 
 function onMouseUp (event) {
   if (drawing) {
-    if (newFigure.limbs.length < 4) {
-      newFigure.limb.smooth();
-      newFigure.limb.strokeColor = "black";
-      newFigure.limbs.push(newFigure.limb);
-      console.log("LIMB", newFigure.limb);
-      console.log("LIMBS", newFigure.limbs);
-
-      if (newFigure.limbs.length === 4) {
-        drawnFigure = new Group(newFigure.limbs);
-        var figure = new StickFigure(drawnFigure);
-        figure.representation.strokeColor = {
-          hue: Math.random() * 360,
-          saturation: 1,
-          brightness: 1
-        };
-        destination = figure.representation.position;
-        stickFiguresOnCanvas.push(figure);
-        console.log(figure);
-        //reset the new figure object
-        newFigure = {
-          limb: undefined,
-          limbs: []
-        }
-        $("#draw-stick-figure-button").removeClass("selected");
-        drawing = false;
-      }
-    } 
-  } else if (newSelection) {
+    newFigure.limb.smooth();
+    newFigure.limb.strokeColor = "black";
+    newFigure.limbs.push(newFigure.limb);
+  } else if (newSelection && event.event.button === 0) {
     showIntersections();
     newSelection.remove();
   }
-
 }
 
 function onFrame (event) {
-    var vector = destination - newFigure.position;
-    newFigure.position += vector / 30;
-    if (newFigure.position === destination) {
-      figureSelected = false;
-      newFigure.strokeColor = {
-        hue: Math.random() * 360,
-        saturation: 1,
-        brightness: 1
-      }
-    }
-}
+  var movingFigures = currentlySelectedFigures;
+  movingFigures.forEach(function(figure){
+    var vector = figure.destination - figure.representation.position;
+    findBodyParts(figure, event);
+    // walk(figure, event);
+    figure.representation.position += vector / 80;
+    for (var i = 0; i < figure.rightLeg.segments.length; i++) {
+      var segment = figure.rightLeg.segments[i];
 
+      // A cylic value between -1 and 1
+      var sinus = Math.sin(event.time * 3 + i);
+      
+      // Change the y position of the segment point:
+      segment.point.y = sinus * 30 + 100;
+    }
+  })
+
+}
 function showIntersections() {
   currentlySelectedFigures = [];
   
   stickFiguresOnCanvas.forEach(function(figure){
     if ( newSelection.intersects(figure.representation) || newSelection.bounds.contains(figure.representation.children[0].interiorPoint) || newSelection.bounds.contains(figure.representation) ) {
-      //needs fixin'
 
-      //figure.representation.contains(newSelection)
       figure.currentlySelected = true;
       currentlySelectedFigures.push(figure);
       figure.representation.strokeColor = "green";
     } else {
       figure.currentlySelected = false;
+      figure.representation.strokeColor = figure.color;
     }
   })
   console.log(currentlySelectedFigures);
@@ -143,11 +213,17 @@ function showIntersections() {
 //   figure.representation.strokeColor = "green";
 // }
 function StickFigure(figure, color){
-  this.health = 40;
-  this.attack = 8;
-  this.representation = figure;
-  this.currentlySelected = false;
-  this.color;
+	this.health = 40;
+	this.attack = 8;
+	this.representation = figure;
+	this.currentlySelected = false;
+	this.color = color;
+	this.destination = this.representation.position;
+  	
+  	figure.leftLeg;
+	figure.rightLeg;
+	figure.leftArm;
+	figure.rightArm;
 }
 
 // StickFigure.prototype.onClick = function(){

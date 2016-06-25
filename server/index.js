@@ -43,25 +43,28 @@ function moveMan (man) {
 }
 
 
+app.get('/*', function (req, res) {
+    res.sendFile(path.join(__dirname, '/../public/index.html'));
+});
+
 io.on('connection', function (socket) {
 	console.log('a user connected');
-
 
 	socket.on('disconnect', function () {
 		console.log('im disconnecting')
 	});
 
+	setInterval(function(){
+		socket.emit('date', {'date': new Date()});
+	}, 1000);
+
+	//socket.on('chat message', function(msg){
+	//	io.emit('chat message', msg);
+	//});
 
 });
 
 
-
-
-
-
-app.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname, '/../', 'public/index.html'));
-});
 
 app.listen(3030, function () {
   console.log('Example app listening on port 3030!');

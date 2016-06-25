@@ -47,16 +47,19 @@ app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, '/../public/index.html'));
 });
 
+console.log("i am here")
+
 io.on('connection', function (socket) {
-	console.log('a user connected');
 
-	socket.on('disconnect', function () {
-		console.log('im disconnecting')
-	});
-
-	setInterval(function(){
-		socket.emit('date', {'date': new Date()});
-	}, 1000);
+	console.log('a user connected!');
+  //
+	//socket.on('disconnect', function () {
+	//	console.log('im disconnecting')
+	//});
+  //
+	//setInterval(function(){
+	//	socket.emit('date', {'date': new Date()});
+	//}, 1000);
 
 	//socket.on('chat message', function(msg){
 	//	io.emit('chat message', msg);

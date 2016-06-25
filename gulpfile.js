@@ -1,11 +1,9 @@
-var gulp = require('gulp'),
-    concat = require('gulp-concat'),
-    livereload = require('gulp-livereload');
+var gulp = require('gulp');
+var concat = require('gulp-concat');
+var livereload = require('gulp-livereload');
 
-gulp.task('watch', function () {
-	gulp.watch(['./public/js/*.js', './index.html'], function () {
-    livereload.reload();
-  });
+gulp.task('reload', function () {
+	livereload.reload();
 });
 
 
@@ -15,4 +13,9 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest('./public/js/'));
 });
 
-gulp.task('default', ['scripts', 'watch']);
+gulp.task('default', function () {
+	gulp.watch(['./browser/js/*.js', './index.html'], ['scripts'], ['reload']);
+
+	livereload.listen();
+});
+

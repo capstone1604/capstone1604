@@ -52,19 +52,39 @@ function findBodyParts(stickfigure, event){
 		rightLeg = lowestSegment2.path;	
 	}
 
-	leftLeg.strokeColor = "blue";
-	rightLeg.strokeColor = "red";
-	leftArm.strokeColor = "black";
-	rightArm.strokeColor = "orange";
 
-	stickfigure.leftLeg = leftLeg;
-	stickfigure.rightLeg = rightLeg;
-	stickfigure.leftArm = leftArm;
-	stickfigure.rightArm = rightArm;
+	if (leftLeg) leftLeg.strokeColor = "blue";
+	if (rightLeg) rightLeg.strokeColor = "red";
+	if (leftArm) leftArm.strokeColor = "black";
+	if (rightArm) rightArm.strokeColor = "orange";
+
+	if (leftLeg) stickfigure.leftLeg = leftLeg;
+	if (rightLeg) stickfigure.rightLeg = rightLeg;
+	if (leftArm) stickfigure.leftArm = leftArm;
+	if (rightArm) stickfigure.rightArm = rightArm;
 	// walk(stickfigure, event);
+	stickfigure.rightLeg.curveBy(0.5);
+	stickfigure.leftLeg.split(Math.floor(stickfigure.leftLeg.curves.length/2), 0.5);
+	// var test = CurveLocation(stickfigure.rightLeg.curves, 0.5);
+	console.log("TEST: ", stickfigure.rightLeg.curves);
+
+
+	//TEST FOR MOVEMENT -----------------------------------------------------------
+
+	// for (var i = 0; i < points - 1; i++) {
+	// 	var segment = path.segments[i];
+	// 	var nextSegment = segment.next;
+	// 	var vector = segment.point - nextSegment.point;
+	// 	vector.length = length;
+	// 	nextSegment.point = segment.point - vector;
+	// }
+
+	var lastSegment = rightLeg.segments[rightLeg.segments.length - 1];
+		// var nextSegment = segment.next;
+	var middleSegment = rightLeg.segments[Math.floor(rightLeg.segments.length/2)];
+	// var vector = segment.point - nextSegment.point;
+	middleSegment.point = new Point (100,100);
+	// vector.length = length;
+	// nextSegment.point = new Point (100,100);
+	// path.smooth({ type: 'continuous' });
 }
-
-// function walk(stickfigure, event){
-// 	var rightLeg = stickfigure.rightLeg;
-
-// }

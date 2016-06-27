@@ -14,8 +14,12 @@ var newFigure = {
 
 $("#draw-stick-figure-button").click(function(){
   $(this).toggleClass("selected");
-  drawing = !drawing;
-  console.log("drawing? : ", drawing);
+  if (drawing){
+    finishDrawing();
+  }
+  else {
+    drawing = true;
+  }
 })
 
 function finishDrawing (){

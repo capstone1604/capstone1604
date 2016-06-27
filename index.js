@@ -6,7 +6,7 @@ var utils = require('./utils');
 
 
 
-app.use(express.static(__dirname + '/public/js/'));
+app.use(express.static(__dirname + '/public/'));
 app.use(express.static(__dirname + '/node_modules/'));
 
 

@@ -13,6 +13,7 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('default', function () {
+	gulp.start('scripts');
 	gulp.watch(['./browser/js/*.js', './index.html'], ['scripts'], ['reload']);
 
 	livereload.listen();
